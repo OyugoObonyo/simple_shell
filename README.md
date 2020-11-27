@@ -40,9 +40,9 @@ $
 ## Built in commands
 
 Ojashell supports commands such as
-*env
-*exit
-*echo
+* env
+* exit
+* echo
 
 ## Authors :black_nib:
 
