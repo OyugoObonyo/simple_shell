@@ -37,6 +37,9 @@ int colon_check(char *s);
 int perror_int(int n);
 int print_int(int n);
 int echo_check(int ret, char *command, char **flags, char **env);
+void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
+void assign_lineptr(char **lineptr, size_t *n, char *buffer, size_t b);
+ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
 char *var_parse(char *var);
 
 #endif
