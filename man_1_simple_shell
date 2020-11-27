@@ -40,10 +40,12 @@ $
 .br
 exit - to exit Ojashell
 .br
-cd - to change the directory
+env -  to print environment variables
+.br
+echo - echo to standard output
 
 .SH BUGS
 Report any bugs to <nyikal1999@gmail.com> or <ewaarjames@gmail.com>
 .SH AUTHORS
-Oyugo Obonyo <nyikal1999@gmail.com>
+Oyugo Obonyo <nyikal1999@gmail.com> &&
 Ewar James <ewaarjames@gmail.com>

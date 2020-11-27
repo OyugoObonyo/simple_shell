@@ -6,7 +6,7 @@
  * @flags: the rest of what was accepted from getline
  * @env: a copy of the environment variables
  * @av: a copy of the argument taken in from the command line at launch
- * @com_count: the command number in current shell session.
+ * @com_count: Current number of commands
  * @buffer: the address of the memory allocated by getline.
  * @ret: the most recent return value
  * Return: 0 if successful
@@ -38,21 +38,23 @@ int switcher(int val, char *com_path, char **flags, char **env, char **av,
 	}
 	return (0);
 }
+
 /**
  * executer - forks current process to run execve
  * @command: the absolute path of an executable
  * @flags: an array of strings, including extra input for the command
  * Return: 0 if successful, -1 if not
  */
+
 int executer(char *command, char **flags)
 {
-	pid_t kid_pid;
+	pid_t child_pid;
 	int status;
 
-	kid_pid = fork();
-	if (kid_pid == -1)
+	child_pid = fork();
+	if (child_pid == -1)
 		return (-1);
-	if (kid_pid == 0)
+	if (child_pid == 0)
 	{
 		execve(command, flags, NULL);
 		exit(187);
