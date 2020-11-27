@@ -1,6 +1,29 @@
 #include "hshell.h"
 
 /**
+ *prompt - prints out prompt
+ *Return: Nothing
+ */
+
+void prompt(void)
+{
+	if (isatty(STDIN_FILENO))
+		_puts("Ojashell$ ");
+}
+
+/**
+ * _ControlC - block signal of Ctrl + C
+ * @s: signal to verify
+ * Return: Nothing.
+ */
+
+void _ControlC(int s)
+{
+	(void)s;
+
+	write(STDOUT_FILENO, "\nOjashell$ ", 11);
+}
+/**
  *main - entry point
  * @ac: argument count
  * @av: arguement vector
@@ -8,33 +31,30 @@
  * Return: 0 if successful
  */
 
-int main(int ac, char **av, char **env)
+int main(__attribute__((unused))int ac, char **av, char **env)
 {
 	char *usr_input = NULL, *cmd[32], *cmd_path = NULL;
-	ssize_t num_read = 1;
+	ssize_t getret = 1;
 	size_t n = 0;
-	int i, flag, path_value, cmd_count = 0, ret = 0, file_in_flag = 1;
-	(void) ac;
+	int i, flag, pathval, cmd_count = 0, ret = 0, check = 1;
 
-
-	while (num_read != EOF && file_in_flag)
+	while (getret != EOF && check)
 	{
-		if (isatty(STDIN_FILENO))
-			_puts("Ojashell$ ");
+		prompt();
 		if (av[1] != NULL)
 		{
 			usr_input = _strdup(av[1]);
-			file_in_flag = 0;
+			check = 0;
 		}
-		else	
-			signal(SIGINT, _ControlC), num_read = getline(&usr_input, &n, stdin);
-		if (num_read == EOF)
+		else
+			signal(SIGINT, _ControlC), getret = getline(&usr_input, &n, stdin);
+		if (getret == EOF)
 		{
 			free(usr_input);
-			return (ret);
+			return (0);
 		}
 		cmd_count++;
-		del_newline(usr_input);
+		check_stuff(usr_input);
 		if (usr_input[0])
 		{
 			cmd[0] = _strtok(usr_input, " ");
@@ -44,8 +64,8 @@ int main(int ac, char **av, char **env)
 				if (cmd[i] == NULL)
 					flag = 0;
 			}
-			cmd_path = get_path(cmd[0], env, &path_value);
-			ret = switcher(path_value, cmd_path, cmd,
+			cmd_path = find_path(cmd[0], env, &pathval);
+			ret = switcher(pathval, cmd_path, cmd,
 					env, av, cmd_count, usr_input, ret);
 			free(cmd_path);
 			if (av[1] != NULL)
