@@ -1,9 +1,9 @@
 #include "hshell.h"
 
 /**
-*prompt - prints out prompt
-*Return: Nothing
-*/
+ *prompt - prints out prompt
+ *Return: Nothing
+ */
 
 void prompt(void)
 {
