@@ -58,24 +58,21 @@ char *env_path_parse(char **env, char *var)
 	return (path_line);
 }
 /**
- * get_path - returns absolute path to a command.
- * @comm: the command string
- * @env: the environment variables, in an array of strings.
- * @ret_value: int pointer to be changed depending on conditions.
- * Return: the absolute path to the command, if it exists.
- * If no file exists, return bad command.
- * Description:	ret_value will return...
- * 1 if path exists and permission is ok
- * 0 if path exists and no permission allowed
- * -1 if no path exists (command not found)
+ * find_path - returns path to a command
+ * @cmd: command
+ * @env: environment variables
+ * @retval: pointer to an integer.
+ * Return: the absolute path to the command
+ *         1 if path exists and permissions allowed
+ *0 if path exists and permissions not allowed
+ *        -1 if no path exists
  */
-char *get_path(char *comm, char **env, int *ret_value)
+char *find_path(char *cmd, char **env, int *retval)
 {
 	int i = 0, flag, acc_ret, cur_dir_index;
 	char *pathlist[32], *paths_in, *cat_temp, delim = ':';
-
-	*ret_value = built_ins_abs_paths_check(comm);
-	if (*ret_value == 2)
+	*retval = builtin_path(cmd);
+	if (*retval == 2)
 	{
 		paths_in = env_path_parse(env, "PATH=");
 		cur_dir_index = colon_check(paths_in);
@@ -94,27 +91,27 @@ char *get_path(char *comm, char **env, int *ret_value)
 		}
 		for (i = 0; pathlist[i]; i++)
 		{
-			cat_temp = path_combo(pathlist[i], comm);
+			cat_temp = path_combo(pathlist[i], cmd);
 			acc_ret = access(cat_temp, F_OK);
 			if (acc_ret == 0)
 			{
-				*ret_value = 1;
+				*retval = 1;
 				acc_ret = access(cat_temp, X_OK);
 				if (acc_ret == 0)
-					*ret_value = 3;
+					*retval = 3;
 				free(paths_in);
 				return (cat_temp);
 			}
 			free(cat_temp);
 		}
 	}
-	if (*ret_value == 2)
+	if (*retval == 2)
 		free(paths_in);
-	return (_strdup(comm));
+	return (_strdup(cmd));
 }
 
 /**
- * built_ins_abs_paths_check - checks the initial command
+ * builtin_path - checks the initial command
  * @com: the command to check
  * Return: See lines below.
  * 0 if is path, but no file found.
@@ -123,7 +120,7 @@ char *get_path(char *comm, char **env, int *ret_value)
  * 3 if found and permission is granted.
  * 4 if command matches 'env'.
  */
-int built_ins_abs_paths_check(char *com)
+int builtin_path(char *com)
 {
 	int ret_value = 2;
 
@@ -144,7 +141,7 @@ int built_ins_abs_paths_check(char *com)
 			return (5);
 		if (_strcmp("echo", com))
 			return (6);
-		if (_strcmp("daddy?", com))
+		if (_strcmp("cd", com))
 			return (7);
 
 
@@ -153,7 +150,7 @@ int built_ins_abs_paths_check(char *com)
 }
 
 /**
- * colon_check - checks a string for leading, appending, or back to back ':'.
+ * colon_check - checks a string ':'.
  * @s: the string to be checked.
  * Return: -1 if no leading, ending, or double colons are present.
  * Otherwise, returns the corresponding index where the colon appears.
